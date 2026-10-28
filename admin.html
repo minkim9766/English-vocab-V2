@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>관리자 · 영단어 암기 도우미</title>
+  <link rel="stylesheet" href="/admin.css?v=1" />
+  <script defer src="/admin.js?v=1"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div><p class="eyebrow">VOCABULARY HELPER / CONTROL PANEL</p><h1>관리자</h1></div>
+    <a class="button secondary" href="/">학습 화면으로</a>
+  </header>
+  <main>
+    <section id="authView" class="authPanel panel">
+      <p class="eyebrow">RESTRICTED ACCESS</p>
+      <h2 id="authTitle">관리자 인증</h2>
+      <p id="authDescription" class="muted">관리자 비밀번호를 입력하세요.</p>
+      <form id="authForm">
+        <label for="adminPassword" id="passwordLabel">비밀번호</label>
+        <input id="adminPassword" name="password" type="password" minlength="12" maxlength="256" required autocomplete="current-password" />
+        <div id="passwordConfirmWrap" class="hidden">
+          <label for="adminPasswordConfirm">비밀번호 확인</label>
+          <input id="adminPasswordConfirm" type="password" minlength="12" maxlength="256" autocomplete="new-password" />
+          <p class="hint">12자 이상 입력하세요. 추측하기 어려운 16자 이상의 긴 문구를 권장합니다.</p>
+        </div>
+        <p id="authMessage" class="message" aria-live="polite"></p>
+        <button id="authSubmit" class="button primary" type="submit">로그인</button>
+      </form>
+      <p class="securityNote">관리자 비밀번호는 브라우저에 저장하지 않습니다. 인증 세션은 HttpOnly 쿠키로 관리됩니다.</p>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <div class="dashHeader panel">
+        <div><p class="eyebrow">SIGNED IN</p><h2>관리 도구</h2><p class="muted">변경 내용은 서버의 JSON 파일에 저장됩니다.</p></div>
+        <button id="logoutBtn" class="button secondary" type="button">로그아웃</button>
+      </div>
+      <nav class="tabs" aria-label="관리 기능">
+        <button class="tab selected" type="button" data-tab="rankingsPanel">랭킹 관리</button>
+        <button class="tab" type="button" data-tab="vocabularyPanel">단어 관리</button>
+        <button class="tab" type="button" data-tab="passwordPanel">비밀번호 변경</button>
+      </nav>
+
+      <section id="rankingsPanel" class="tabPanel">
+        <div class="panel">
+          <div class="sectionHeading"><div><p class="eyebrow">LEADERBOARD</p><h2>랭킹 기록</h2><p class="muted">이름, 점수, 문항별 답안·정오·시간을 수정하거나 기록을 삭제합니다.</p></div><button id="refreshRankingsBtn" class="button secondary" type="button">새로고침</button></div>
+          <div class="toolbar">
+            <label class="compactLabel">범위
+              <select id="adminRankCategory"><option value="25">랜덤 25개</option><option value="50">랜덤 50개</option><option value="100" selected>랜덤 100개</option><option value="200">랜덤 200개</option><option value="all">랜덤 전부</option></select>
+            </label>
+            <label class="compactLabel grow">이름 검색
+              <input id="rankSearch" type="search" placeholder="랭킹 이름 검색" />
+            </label>
+          </div>
+          <p id="rankListStatus" class="statusLine" aria-live="polite">랭킹을 불러오는 중입니다.</p>
+          <div class="tableWrap"><table><thead><tr><th>순위</th><th>이름</th><th>점수</th><th>정답</th><th>문항</th><th>등록일</th><th>관리</th></tr></thead><tbody id="adminRankBody"></tbody></table></div>
+        </div>
+
+        <div class="panel">
+          <p class="eyebrow">MANUAL RECORD</p><h2>완벽한 점수 랭킹 생성</h2>
+          <p class="muted">선택한 범위의 문항을 모두 정답·0초로 생성합니다. 현재 점수 규칙상 문항당 최대 11점이며, 생성 기록에는 관리자가 만든 기록이라는 표시가 남습니다.</p>
+          <form id="perfectRankForm" class="perfectForm">
+            <label>랭킹 이름<input id="perfectRankName" maxlength="30" required placeholder="예: 관리자 테스트 계정" /></label>
+            <label>랭킹 범위<select id="perfectRankCategory"><option value="25">랜덤 25개</option><option value="50">랜덤 50개</option><option value="100" selected>랜덤 100개</option><option value="200">랜덤 200개</option><option value="all">랜덤 전부</option></select></label>
+            <label>문제 방향<select id="perfectRankDirection"><option value="en2ko">영어 → 한국어</option><option value="ko2en">한국어 → 영어</option></select></label>
+            <button class="button primary" type="submit">완벽한 기록 생성</button>
+          </form>
+          <p id="perfectRankStatus" class="message" aria-live="polite"></p>
+        </div>
+
+        <section id="rankEditorPanel" class="panel hidden">
+          <div class="sectionHeading"><div><p class="eyebrow">EDIT RECORD</p><h2 id="rankEditorTitle">랭킹 기록 수정</h2><p id="rankEditorMeta" class="muted"></p></div><button id="closeRankEditorBtn" type="button" class="button secondary">닫기</button></div>
+          <form id="rankEditForm">
+            <div class="fieldGrid">
+              <label>랭킹 이름<input id="editRankName" maxlength="30" required /></label>
+              <label>최종 점수<input id="editRankScore" type="number" min="0" max="10000000" step="0.1" required /></label>
+            </div>
+            <div class="subHeading"><div><h3>문항별 기록</h3><p class="muted">답안·정오·풀이 시간은 각각 수정할 수 있습니다. 정답 수와 시간 점수는 저장 시 문항 기록에서 다시 계산되지만, 최종 점수는 위 입력값을 기준으로 저장됩니다.</p></div><button id="recalcScoreBtn" class="button secondary" type="button">문항 기록으로 점수 계산</button></div>
+            <div id="answerEditorRows" class="answerEditorRows"></div>
+            <p id="rankEditMessage" class="message" aria-live="polite"></p>
+            <div class="formActions"><button class="button primary" type="submit">수정 사항 저장</button><button id="deleteRankBtn" class="button danger" type="button">랭킹 삭제</button></div>
+          </form>
+        </section>
+      </section>
+
+      <section id="vocabularyPanel" class="tabPanel hidden">
+        <div class="panel">
+          <div class="sectionHeading"><div><p class="eyebrow">VOCABULARY DATA</p><h2>단어 관리</h2><p class="muted">표제어·뜻·품사·기타 정보·유의어·반의어를 추가하거나 수정·삭제합니다.</p></div><button id="refreshWordsBtn" class="button secondary" type="button">새로고침</button></div>
+          <div class="toolbar">
+            <label class="compactLabel">강 선택<select id="wordSectionSelect"></select></label>
+            <label class="compactLabel grow">단어 검색<input id="wordSearch" type="search" placeholder="영단어 또는 뜻 검색" /></label>
+            <button id="newWordBtn" type="button" class="button primary">새 단어</button>
+          </div>
+          <p id="wordListStatus" class="statusLine" aria-live="polite">단어를 불러오는 중입니다.</p>
+          <div class="wordAdminLayout">
+            <div id="wordList" class="wordList"></div>
+            <section class="wordEditor">
+              <p class="eyebrow">WORD EDITOR</p><h3 id="wordEditorTitle">단어를 선택하세요</h3>
+              <form id="wordEditForm">
+                <label>영단어<input id="wordEnglish" maxlength="200" required placeholder="표제어" /></label>
+                <label>뜻 <span class="hintInline">한 줄에 하나씩 입력</span><textarea id="wordMeanings" rows="5" required placeholder="첫 번째 뜻\n두 번째 뜻"></textarea><span class="fieldHelp">뜻의 한 줄 안에 / 또는 쉼표가 있으면 퀴즈에서는 구분된 각 표현을 정답으로 인정합니다.</span></label>
+                <label>품사·형태<input id="wordForm" maxlength="100" placeholder="예: n., v." /></label>
+                <label>기타 정보 <span class="hintInline">한 줄에 하나씩</span><textarea id="wordOther" rows="3"></textarea></label>
+                <label>유의어 <span class="hintInline">한 줄에 하나씩</span><textarea id="wordSynonyms" rows="3"></textarea></label>
+                <label>반의어 <span class="hintInline">한 줄에 하나씩</span><textarea id="wordAntonyms" rows="3"></textarea></label>
+                <p id="wordEditMessage" class="message" aria-live="polite"></p>
+                <div class="formActions"><button id="saveWordBtn" class="button primary" type="submit">단어 저장</button><button id="deleteWordBtn" class="button danger" type="button" disabled>단어 삭제</button></div>
+              </form>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="passwordPanel" class="tabPanel hidden">
+        <div class="panel passwordPanel">
+          <p class="eyebrow">ACCOUNT SECURITY</p><h2>관리자 비밀번호 변경</h2><p class="muted">변경 후 현재 세션은 종료되며, 새 비밀번호로 다시 로그인해야 합니다.</p>
+          <form id="changePasswordForm">
+            <label>현재 비밀번호<input id="currentPassword" type="password" required autocomplete="current-password" maxlength="256" /></label>
+            <label>새 비밀번호<input id="newPassword" type="password" required minlength="12" maxlength="256" autocomplete="new-password" /></label>
+            <label>새 비밀번호 확인<input id="newPasswordConfirm" type="password" required minlength="12" maxlength="256" autocomplete="new-password" /></label>
+            <p id="changePasswordMessage" class="message" aria-live="polite"></p>
+            <button class="button primary" type="submit">비밀번호 변경</button>
+          </form>
+        </div>
+      </section>
+    </section>
+  </main>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+vocab.json
+rankings.json
+admin-auth.json
+admin-audit.jsonl
+.*.tmp

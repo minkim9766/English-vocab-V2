@@ -3,162 +3,153 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1220" />
   <title>영단어 암기 도우미</title>
-  <link rel="stylesheet" href="style.css?v=2">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="style.css?v=6">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Noto+Sans+KR:wght@300;400;700;800&display=swap" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script defer src="script.js?v=6"></script>
 </head>
 <body>
-  <header>
-    <h1>영단어 암기 도우미</h1>
-  </header>
-
+  <header><h1>영단어 암기 도우미</h1></header>
   <main>
     <section id="homeScreen" class="homeScreen">
       <div class="hero">
         <p class="eyebrow">MODE SELECT</p>
         <h2>모드 선택</h2>
-        <p class="heroCopy">원하는 모드를 선택하세요.</p>
+        <p class="heroCopy">학습 모드를 선택하세요.</p>
       </div>
-
       <div class="modeGrid">
         <button type="button" class="modeCard modeKo2En" data-mode="ko2en">
-          <span class="modeIcon">한</span>
-          <span class="modeTitle">한국어 → 영어</span>
-          <span class="modeDesc">뜻을 보고 영어를 떠올리는 연습</span>
+          <span class="modeIcon">한</span><span class="modeTitle">한국어 → 영어</span><span class="modeDesc">뜻을 보고 영어를 떠올리는 연습</span>
         </button>
         <button type="button" class="modeCard modeEn2Ko" data-mode="en2ko">
-          <span class="modeIcon">A</span>
-          <span class="modeTitle">영어 → 한국어</span>
-          <span class="modeDesc">단어를 보고 한국어 뜻을 바로 찾기</span>
+          <span class="modeIcon">A</span><span class="modeTitle">영어 → 한국어</span><span class="modeDesc">단어를 보고 한국어 뜻을 떠올리는 연습</span>
         </button>
         <button type="button" class="modeCard modeRandom" data-mode="random">
-          <span class="modeIcon">?</span>
-          <span class="modeTitle">랜덤</span>
-          <span class="modeDesc">두 방향을 섞어서 실전처럼 훈련</span>
+          <span class="modeIcon">?</span><span class="modeTitle">랜덤</span><span class="modeDesc">영어와 한국어 방향을 섞어 훈련</span>
         </button>
       </div>
-
       <div class="quizCountPicker" aria-label="퀴즈 개수 선택">
         <div class="pickerLabel">퀴즈 개수</div>
         <div class="pickerButtons">
           <button type="button" class="quizCountBtn" data-count="10">10개</button>
-          <button type="button" class="quizCountBtn" data-count="30">30개</button>
+          <button type="button" class="quizCountBtn" data-count="25">25개</button>
           <button type="button" class="quizCountBtn" data-count="50">50개</button>
           <button type="button" class="quizCountBtn" data-count="100">100개</button>
           <button type="button" class="quizCountBtn" data-count="200">200개</button>
           <button type="button" class="quizCountBtn selected" data-count="all">전부</button>
         </div>
       </div>
+      <div class="homeActions"><button type="button" id="openRankingsHome" class="ghostBtn rankHomeBtn">랭킹 보기</button><div id="dataStatus" class="dataStatus" role="status">단어 자료를 불러오는 중입니다.</div><a href="/admin.html" class="ghostBtn adminEntry">관리자</a></div>
     </section>
 
     <section id="sessionArea" class="hidden">
-      <div class="sessionTopBar">
-        <div id="sessionLabel" class="sessionLabel"></div>
-        <button type="button" id="exitBtn" class="ghostBtn">나가기</button>
-      </div>
-
+      <div class="sessionTopBar"><div id="sessionLabel" class="sessionLabel"></div><button type="button" id="exitBtn" class="ghostBtn">홈으로</button></div>
       <section id="flashArea" class="hidden">
         <div class="sectionTitle">플래시카드</div>
-        <div class="miniActions">
-          <button type="button" id="openQuizBtn" class="ghostBtn">퀴즈로 전환</button>
-        </div>
-        
-        <!-- 통계 오버레이 창 -->
+        <div class="miniActions"><button type="button" id="openQuizBtn" class="ghostBtn">퀴즈로 전환</button></div>
         <div class="flashTopStats">
-          <div class="statBadge knownStat">
-            <div class="statVal" id="flKnw">0</div>
-            <div class="statLbl">외움</div>
-          </div>
-          <div class="statBadge unknownStat">
-            <div class="statVal" id="flUnk">0</div>
-            <div class="statLbl">못 외움</div>
-          </div>
+          <div class="statBadge knownStat"><div class="statVal" id="flKnw">0</div><div class="statLbl">외움</div></div>
+          <div class="statBadge unknownStat"><div class="statVal" id="flUnk">0</div><div class="statLbl">못 외움</div></div>
         </div>
-
-      <div class="cardWrap">
-        <div id="card" class="card" role="button" aria-label="플래시 카드 뒤집기" tabindex="0">
-          <div class="cardInner">
-            <div id="cardFront" class="side frontSide">
-              <div class="textInner">카드를 시작하세요</div>
-            </div>
-            <div id="cardBack" class="side backSide">
-              <div class="textInner"></div>
+        <div class="cardWrap">
+          <button id="relationToggle" class="relationToggle" type="button" aria-pressed="false" title="유의어·반의어 표시 전환">유의어·반의어</button>
+          <div id="card" class="card" role="button" aria-label="플래시 카드 뒤집기" tabindex="0">
+            <div class="cardInner">
+              <div id="cardFront" class="side frontSide"><div class="textInner">카드를 시작하세요</div></div>
+              <div id="cardBack" class="side backSide"><div class="textInner"></div></div>
             </div>
           </div>
+          <div class="dragOverlay" aria-hidden="true"><div class="dragLabel left">외움</div><div class="dragLabel right">못 외움</div><div class="dragLabel down">넘기기</div><div class="dragDivider"></div></div>
         </div>
-        <div class="dragOverlay" aria-hidden="true">
-          <div class="dragLabel left">외움</div>
-          <div class="dragLabel right">못 외움</div>
-          <div class="dragLabel down">넘기기</div>
-          <div class="dragDivider"></div>
-        </div>
-      </div>
-      <div class="cardButtons">
-        <button type="button" id="knowBtn">외웠다</button>
-        <button type="button" id="dontKnowBtn">외우지 못함</button>
-        <button type="button" id="skipBtn">넘기기</button>
-      </div>
+        <div class="cardButtons"><button type="button" id="knowBtn">외웠다</button><button type="button" id="dontKnowBtn">외우지 못함</button><button type="button" id="skipBtn">넘기기</button></div>
       </section>
 
-      <!-- 플래시 카드 결과 창 -->
-      <section id="flashResultArea" class="hidden resultArea">
-        <div class="resultBox">
-          <div style="font-size: 3rem; margin-bottom:10px;">🎉</div>
-          <h2>플래시카드 완료!</h2>
-          <div class="flashResultStats"></div>
-          <div class="resultActions">
-            <button type="button" id="retryUnknownBtn" class="accentBtn">못 외운 단어 다시 학습</button>
-            <button type="button" id="retryAllFlashBtn" class="ghostBtn">처음부터 다시</button>
-            <button type="button" id="fromFlashToQuizBtn" class="ghostBtn">퀴즈로 확인하기</button>
-          </div>
-        </div>
-      </section>
+      <section id="flashResultArea" class="hidden resultArea"><div class="resultBox">
+        <h2>플래시카드 완료</h2><div class="flashResultStats"></div>
+        <div class="resultActions"><button type="button" id="retryUnknownBtn" class="accentBtn">못 외운 단어 다시 학습</button><button type="button" id="retryAllFlashBtn" class="ghostBtn">처음부터 다시</button><button type="button" id="fromFlashToQuizBtn" class="ghostBtn">퀴즈로 확인하기</button></div>
+      </div></section>
 
       <section id="quizArea" class="hidden">
-        <div class="sectionTitle">퀴즈</div>
-        <div class="miniActions">
-          <button type="button" id="openFlashBtn" class="ghostBtn">플래시카드로 전환</button>
-        </div>
+        <div class="sectionTitle">퀴즈</div><div class="miniActions"><button type="button" id="openFlashBtn" class="ghostBtn">플래시카드로 전환</button></div>
         <div class="flashTopStats quizTopStats">
-          <div class="statBadge knownStat">
-            <div class="statVal" id="qCorrect">0</div>
-            <div class="statLbl">맞음</div>
-          </div>
-          <div class="statBadge unknownStat">
-            <div class="statVal" id="qWrong">0</div>
-            <div class="statLbl">틀림</div>
-          </div>
+          <div class="statBadge knownStat"><div class="statVal" id="qCorrect">0</div><div class="statLbl">맞음</div></div>
+          <div class="statBadge unknownStat"><div class="statVal" id="qWrong">0</div><div class="statLbl">틀림</div></div>
+          <div class="statBadge timerStat" id="timerBadge"><div class="statVal" id="timerValue">10.0</div><div class="statLbl">남은 초</div></div>
         </div>
+        <div class="timerTrack"><div id="timerBar" class="timerBar"></div></div>
+        <div id="quizProgress" class="quizProgress">1 / 1</div>
         <div id="quizPrompt" class="prompt"></div>
-        <input id="quizInput" placeholder="정답을 입력하세요" autocomplete="off"/>
-        <div class="quizButtons">
-          <button type="button" id="submitAnswer">제출</button>
-          <button type="button" id="nextQuiz">다음</button>
-        </div>
-        <div id="quizFeedback"></div>
+        <input id="quizInput" placeholder="정답을 입력하세요" autocomplete="off" spellcheck="false" />
+        <div class="quizButtons"><button type="button" id="submitAnswer">제출</button><button type="button" id="nextQuiz" disabled>다음 문제</button></div>
+        <div id="quizFeedback" aria-live="polite"></div>
+        <section id="liveLogArea" class="logPanel hidden"><div class="logPanelHead"><h3>내 문제 목록</h3><span>오답 복습용 기록</span></div><div class="tableScroll"><table class="questionTable"><thead><tr><th>번호</th><th>제시된 문제</th><th>영단어</th><th>내 답안</th><th>정답</th><th>결과</th><th>풀이 시간</th></tr></thead><tbody id="liveLogBody"></tbody></table></div></section>
       </section>
 
-      <!-- 퀴즈 결과 창 -->
-      <section id="quizResultArea" class="hidden resultArea">
-        <div class="resultBox">
-          <div id="quizResultEmoji" style="font-size: 3rem; margin-bottom:10px;">🏆</div>
-          <h2>퀴즈 완료!</h2>
-          <div id="quizScoreText" class="scoreText"></div>
-          <div class="resultActions">
-            <button type="button" id="reviewWrongBtn" class="accentBtn hidden">틀린 문제 플래시카드로 복습</button>
-            <button type="button" id="retryAllQuizBtn" class="ghostBtn">퀴즈 처음부터 다시</button>
+      <section id="quizResultArea" class="hidden resultArea resultAreaWide">
+        <div class="resultBox quizResultBox" id="quizResultBox" data-tier="steady">
+          <div class="quizEffectHost" aria-hidden="true"></div>
+          <div class="resultHeading"><div id="quizResultEmoji" class="resultEmoji">결과</div><div><p class="eyebrow">QUIZ COMPLETE</p><h2>퀴즈 결과</h2><p id="quizResultSub" class="muted">문제별 기록을 바탕으로 점수를 계산합니다.</p></div></div>
+          <div class="scoreStage" id="scoreStage">
+            <div class="scoreCounters">
+              <div class="scoreCounter baseCounter" id="baseCounter"><span class="counterLabel">정답 점수</span><strong id="baseScoreCount">0</strong><span class="counterUnit">점</span><span id="baseFloat" class="scoreFloat"></span></div>
+              <div class="scoreOperator" id="scoreOperator">+</div>
+              <div class="scoreCounter timeCounter" id="timeCounter"><span class="counterLabel">시간 추가 점수</span><strong id="timeScoreCount">0.0</strong><span class="counterUnit">점</span><span id="timeFloat" class="scoreFloat"></span></div>
+            </div>
+            <div id="mergeLine" class="mergeLine"><span></span></div>
+            <div id="finalScorePanel" class="finalScorePanel"><span>최종 점수</span><strong id="finalScoreCount">0.0</strong><small id="finalScoreDetails"></small></div>
+            <div id="scoreAnimationStatus" class="scoreAnimationStatus">문제별 점수를 계산하고 있습니다.</div>
+          </div>
+          <section class="resultLogSection"><div class="logPanelHead"><h3>문제별 결과</h3><span id="resultLogSummary"></span></div><div class="tableScroll resultTableScroll"><table class="questionTable resultQuestionTable"><thead><tr><th>번호</th><th>제시된 문제</th><th>영단어</th><th>내 답안</th><th>정답</th><th>결과</th><th>풀이 시간</th></tr></thead><tbody id="resultLogBody"></tbody></table></div></section>
+          <div class="resultActions resultActionsGrid">
+            <button type="button" id="registerRankBtn" class="accentBtn hidden">랭킹 등록</button>
+            <button type="button" id="openRankingsResultBtn" class="ghostBtn">랭킹 보기</button>
+            <button type="button" id="reviewWrongBtn" class="ghostBtn hidden">틀린 문제 플래시카드로 복습</button>
+            <button type="button" id="retryAllQuizBtn" class="ghostBtn">같은 조건으로 다시 풀기</button>
             <button type="button" id="quizToHomeBtn" class="ghostBtn">홈으로</button>
           </div>
         </div>
       </section>
     </section>
 
-    <!-- statsRow (하단)은 이제 숨기거나 제거. 세션 통계로 대체 -->
+    <section id="rankingArea" class="hidden rankingArea">
+      <div class="rankingHeader"><div><p class="eyebrow">LEADERBOARD</p><h2>퀴즈 랭킹</h2><p class="muted">순위는 최종 점수 기준입니다. 점수가 같으면 같은 순위로 표시합니다.</p></div><button id="closeRankingsBtn" class="ghostBtn" type="button">돌아가기</button></div>
+      <div class="rankingTabs" role="tablist" aria-label="랭킹 범위"><button class="rankingTab" type="button" data-rank-category="25">랜덤 25개</button><button class="rankingTab" type="button" data-rank-category="50">랜덤 50개</button><button class="rankingTab selected" type="button" data-rank-category="100">랜덤 100개</button><button class="rankingTab" type="button" data-rank-category="200">랜덤 200개</button><button class="rankingTab" type="button" data-rank-category="all">랜덤 전부</button></div>
+      <div id="rankingStatus" class="rankingStatus" aria-live="polite">랭킹을 불러오는 중입니다.</div>
+      <div class="tableScroll rankingTableScroll"><table class="rankingTable"><thead><tr><th>순위</th><th>이름</th><th>점수</th><th>정답</th><th>총 소요 시간</th><th>등록일</th><th>기록</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
+      <section id="rankingDetail" class="rankingDetail hidden"><div class="rankingDetailHeader"><div><p class="eyebrow">ATTEMPT DETAIL</p><h3 id="rankingDetailTitle">기록 상세</h3><p id="rankingDetailMeta" class="muted"></p></div><button id="closeRankingDetailBtn" class="ghostBtn" type="button">상세 닫기</button></div><div class="tableScroll"><table class="questionTable"><thead><tr><th>번호</th><th>제시된 문제</th><th>영단어</th><th>답안</th><th>정답</th><th>결과</th><th>풀이 시간</th></tr></thead><tbody id="rankingDetailBody"></tbody></table></div></section>
+    </section>
   </main>
 
-  <div id="toastHost" class="toastHost" aria-live="polite"></div>
+  <div id="quizStartModal" class="modalOverlay hidden" role="dialog" aria-modal="true" aria-labelledby="quizStartTitle">
+    <section class="modalCard quizStartCard">
+      <button type="button" id="closeQuizStartBtn" class="modalClose" aria-label="퀴즈 시작 창 닫기">×</button>
+      <p class="eyebrow">QUIZ BRIEFING</p>
+      <h2 id="quizStartTitle">퀴즈 시작 준비</h2>
+      <p class="muted">시작하기를 누르면 3초 카운트다운 후 첫 문제가 시작됩니다.</p>
+      <div id="quizStartContent">
+        <div class="quizBriefGrid">
+          <div class="quizBriefItem"><span>문제 수</span><strong id="quizStartCount">50문항</strong></div>
+          <div class="quizBriefItem"><span>퀴즈 유형</span><strong id="quizStartType">랜덤</strong></div>
+          <div class="quizBriefItem"><span>제한 시간</span><strong id="quizStartLimit">문제당 10초</strong></div>
+        </div>
+        <div id="quizStartRankNotice" class="quizStartRankNotice">
+          <strong id="quizStartRankStatus">랭킹 등록 가능</strong>
+          <p id="quizStartRankNote" class="muted">퀴즈 완료 후 기록을 등록할 수 있습니다.</p>
+        </div>
+      </div>
+      <div id="quizCountdown" class="quizCountdown hidden" aria-live="assertive" aria-atomic="true">3</div>
+      <div id="quizStartActions" class="modalActions">
+        <button type="button" id="startQuizBtn" class="accentBtn">시작하기</button>
+        <button type="button" id="cancelQuizStartBtn" class="ghostBtn">취소</button>
+      </div>
+    </section>
+  </div>
 
-  <script src="script.js?v=7"></script>
+  <div id="rankNameModal" class="modalOverlay hidden" role="dialog" aria-modal="true" aria-labelledby="rankNameTitle">
+    <form id="rankNameForm" class="modalCard"><button type="button" id="closeRankModalBtn" class="modalClose" aria-label="닫기">×</button><p class="eyebrow">SAVE SCORE</p><h2 id="rankNameTitle">랭킹 등록</h2><p id="rankNameDescription" class="muted">랭킹에 표시할 이름을 입력하세요.</p><label for="rankNameInput">이름</label><input id="rankNameInput" name="rankName" maxlength="30" required autocomplete="nickname" placeholder="이름 또는 별명" /><div id="rankSubmitError" class="rankSubmitError" role="alert"></div><div class="modalActions"><button class="accentBtn" type="submit" id="confirmRankBtn">등록하기</button><button class="ghostBtn" type="button" id="cancelRankBtn">취소</button></div></form>
+  </div>
+  <div id="toastHost" class="toastHost" aria-live="polite"></div>
 </body>
 </html>

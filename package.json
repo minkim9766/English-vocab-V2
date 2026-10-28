@@ -1,0 +1,12 @@
+{
+  "name": "vocabulary-helper-v3",
+  "version": "3.2.0",
+  "private": true,
+  "description": "JSON 기반 영단어 암기 도우미, 서버 측 관리자 인증 및 랭킹/단어 편집 기능",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
