@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "algorithm": "scrypt",
+  "salt": "2ba07681e7ef3c4dcc29bdda129eec0b",
+  "hash": "4d5561efc1435f6ce14529c84c7205ff151f09fa302afc11507bec4b7bb27d50cc75cd9c92f858410770b7270079c78273d16cbafb1ebd46a189f4350484f2fc",
+  "createdAt": "2026-10-28T08:27:45.065Z"
+}
